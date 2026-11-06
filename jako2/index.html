@@ -1,0 +1,567 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE UNKNOWN</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Share+Tech+Mono&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #030303;
+    color: #eee;
+    font-family: 'Share Tech Mono', monospace;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.screen {
+    display: none;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 50px 20px;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.screen.active {
+    display: flex;
+    animation: appear 1s ease;
+}
+
+.screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, #260000, #080000 55%, #000);
+    z-index: -2;
+}
+
+.screen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        transparent 0px,
+        rgba(255,255,255,.025) 1px,
+        transparent 3px
+    );
+    z-index: 5;
+}
+
+@keyframes appear {
+    from {opacity: 0; filter: blur(15px);}
+    to {opacity: 1; filter: blur(0);}
+}
+
+.noise {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: .07;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    animation: noise .2s steps(2) infinite;
+}
+
+@keyframes noise {
+    0% {transform:translate(0,0);}
+    25% {transform:translate(2%,-2%);}
+    50% {transform:translate(-2%,2%);}
+    75% {transform:translate(2%,2%);}
+    100% {transform:translate(-2%,-2%);}
+}
+
+.vignette {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    box-shadow: inset 0 0 180px 60px black;
+}
+
+h1 {
+    font-family: 'Creepster', cursive;
+    font-size: clamp(55px, 11vw, 120px);
+    color: #b00000;
+    letter-spacing: 9px;
+    text-shadow: 0 0 15px red, 0 0 45px #790000;
+    animation: flicker 4s infinite;
+}
+
+h2 {
+    font-size: clamp(20px, 4vw, 30px);
+    letter-spacing: 5px;
+    margin-bottom: 30px;
+    color: #b30000;
+    text-shadow: 0 0 15px red;
+}
+
+p {
+    color: #888;
+    margin: 15px;
+    letter-spacing: 2px;
+    line-height: 1.8;
+}
+
+@keyframes flicker {
+    0%,18%,22%,25%,53%,57%,100% {opacity:1;}
+    20%,24%,55% {opacity:.35;}
+}
+
+.glitch {
+    animation: glitch 3s infinite;
+}
+
+@keyframes glitch {
+    0%,94%,100% {transform:translate(0);}
+    95% {transform:translate(3px,-2px);}
+    96% {transform:translate(-3px,2px);}
+    97% {transform:translate(2px,1px);}
+}
+
+button {
+    background: transparent;
+    color: #b00000;
+    border: 1px solid #870000;
+    padding: 15px 40px;
+    margin: 15px;
+    font-family: inherit;
+    font-size: 15px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: .4s;
+}
+
+button:hover {
+    background: #8b0000;
+    color: white;
+    box-shadow: 0 0 15px red, 0 0 50px #700000;
+    transform: scale(1.06);
+}
+
+input {
+    background: rgba(0,0,0,.8);
+    color: white;
+    border: 1px solid #700000;
+    padding: 17px;
+    width: min(320px,85vw);
+    outline: none;
+    text-align: center;
+    font-family: inherit;
+    letter-spacing: 4px;
+    margin: 15px;
+}
+
+input:focus {
+    box-shadow: 0 0 20px #8b0000;
+    border-color: red;
+}
+
+.message {
+    min-height: 30px;
+    color: #b00000;
+    margin: 15px;
+    letter-spacing: 2px;
+}
+
+.small {
+    font-size: 12px;
+    color: #555;
+    letter-spacing: 3px;
+}
+
+.clue {
+    width: min(500px,90vw);
+    border: 1px solid #390000;
+    padding: 20px;
+    margin: 10px;
+    background: rgba(25,0,0,.45);
+    cursor: pointer;
+    transition: .4s;
+}
+
+.clue:hover {
+    border-color: red;
+    box-shadow: 0 0 20px #500000;
+}
+
+.clue span {
+    display: none;
+    color: #aaa;
+    margin-top: 15px;
+}
+
+.clue.open span {
+    display: block;
+    animation: appear .5s;
+}
+
+.question {
+    margin: 15px;
+    width: min(450px,90vw);
+}
+
+.question input {
+    margin-top: 8px;
+}
+
+.shake {
+    animation: shake .3s;
+}
+
+@keyframes shake {
+    0%,100% {transform:translateX(0);}
+    25% {transform:translateX(-8px);}
+    75% {transform:translateX(8px);}
+}
+
+#final h1 {
+    font-size: clamp(45px,9vw,100px);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="noise"></div>
+<div class="vignette"></div>
+
+<!-- PAGE 1 -->
+
+<section id="home" class="screen active">
+
+    <p class="small">UNKNOWN CONNECTION ESTABLISHED</p>
+
+    <h1 class="glitch">DON'T LOOK BACK</h1>
+
+    <p>YOU WERE NOT SUPPOSED TO FIND THIS PLACE.</p>
+
+    <p style="color:#600000">
+        SOME QUESTIONS SHOULD REMAIN UNANSWERED.
+    </p>
+
+    <button onclick="go('password')">ENTER</button>
+
+    <p class="small">THERE IS NO TURNING BACK.</p>
+
+</section>
+
+
+<!-- PAGE 2 -->
+
+<section id="password" class="screen">
+
+    <p class="small">STAGE 01 / AUTHENTICATION</p>
+
+    <h2>WHAT IS THE PASSWORD?</h2>
+
+    <p>Five attempts. Choose carefully.</p>
+
+    <input id="passInput"
+           type="text"
+           placeholder="ENTER PASSWORD"
+           autocomplete="off"
+           onkeydown="if(event.key==='Enter')checkPassword()">
+
+    <button id="submitPassword" onclick="checkPassword()">
+        SUBMIT
+    </button>
+
+    <div class="message" id="passMessage"></div>
+
+    <p id="attempts" class="small">
+        ATTEMPTS REMAINING: 5
+    </p>
+
+    <button onclick="go('clues')">I NEED A CLUE</button>
+
+</section>
+
+
+<!-- PAGE 3 -->
+
+<section id="clues" class="screen">
+
+    <p class="small">STAGE 01 / ARCHIVED INFORMATION</p>
+
+    <h2>THE CLUE ROOM</h2>
+
+    <p>Not everything is as it appears.</p>
+
+    <div class="clue" onclick="this.classList.toggle('open')">
+        <b>CLUE 01</b>
+        <span>
+            A word associated with a secret ritual.
+        </span>
+    </div>
+
+    <div class="clue" onclick="this.classList.toggle('open')">
+        <b>CLUE 02</b>
+        <span>
+            Stanley Kubrick made a film in which this word plays an important role.
+        </span>
+    </div>
+
+    <div class="clue" onclick="this.classList.toggle('open')">
+        <b>CLUE 03</b>
+        <span>
+            The film was released in 1999.
+        </span>
+    </div>
+
+    <div class="clue" onclick="this.classList.toggle('open')">
+        <b>FINAL CLUE</b>
+        <span style="color:#b00000;font-size:23px;">
+            EYES WIDE SHUT
+        </span>
+    </div>
+
+    <button onclick="go('password')">
+        RETURN TO PASSWORD
+    </button>
+
+</section>
+
+
+<!-- PAGE 4 -->
+
+<section id="history" class="screen">
+
+    <p class="small">STAGE 02 / HISTORICAL VERIFICATION</p>
+
+    <h2>TEST YOUR KNOWLEDGE</h2>
+
+    <p>Three events. Three dates. No mistakes.</p>
+
+    <div class="question">
+        <p>When did World War I start?</p>
+        <input id="ww1" type="number" placeholder="YEAR">
+    </div>
+
+    <div class="question">
+        <p>When did World War II start?</p>
+        <input id="ww2" type="number" placeholder="YEAR">
+    </div>
+
+    <div class="question">
+        <p>When did direct US combat involvement in Vietnam begin?</p>
+        <input id="vietnam" type="number" placeholder="YEAR">
+    </div>
+
+    <button onclick="checkHistory()">VERIFY ANSWERS</button>
+
+    <div class="message" id="historyMessage"></div>
+
+</section>
+
+
+<!-- PAGE 5 -->
+
+<section id="final" class="screen">
+
+    <p class="small">ALL VERIFICATIONS COMPLETE</p>
+
+    <h1 class="glitch">YOU MADE IT.</h1>
+
+    <p>YOU HAVE SEEN WHAT WAS HIDDEN.</p>
+
+    <p style="color:#900000">
+        BUT THIS IS ONLY THE BEGINNING.
+    </p>
+
+    <button onclick="openDestination()">CONTINUE</button>
+
+    <p class="small">THE FINAL DOOR IS OPEN.</p>
+
+</section>
+
+
+<script>
+
+/* NAVIGATION */
+
+function go(page) {
+
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+
+    document.getElementById(page).classList.add('active');
+
+    window.scrollTo(0, 0);
+}
+
+
+/* PASSWORD */
+
+let tries = 5;
+let passwordUnlocked = false;
+
+function checkPassword() {
+
+    if (passwordUnlocked || tries <= 0) return;
+
+    const input = document.getElementById('passInput');
+    const message = document.getElementById('passMessage');
+
+    if (input.value.trim().toUpperCase() === 'FIDELIO') {
+
+        passwordUnlocked = true;
+
+        message.style.color = '#00aa44';
+        message.innerText = 'ACCESS GRANTED.';
+
+        document.getElementById('submitPassword').disabled = true;
+
+        setTimeout(() => go('history'), 1200);
+
+    } else {
+
+        tries--;
+
+        document.getElementById('attempts').innerText =
+            'ATTEMPTS REMAINING: ' + tries;
+
+        message.innerText = tries > 0
+            ? 'BE CAREFUL WITH YOUR ATTEMPTS.'
+            : 'NO ATTEMPTS LEFT. FIND THE CLUES.';
+
+        input.value = '';
+
+        document.getElementById('password').classList.add('shake');
+
+        setTimeout(() => {
+            document.getElementById('password').classList.remove('shake');
+        }, 300);
+
+        if (tries <= 0) {
+            input.disabled = true;
+            document.getElementById('submitPassword').disabled = true;
+        }
+    }
+}
+
+
+/* HISTORY */
+
+let historyUnlocked = false;
+
+function checkHistory() {
+
+    if (historyUnlocked) return;
+
+    const ww1 = document.getElementById('ww1').value.trim();
+    const ww2 = document.getElementById('ww2').value.trim();
+    const vietnam = document.getElementById('vietnam').value.trim();
+
+    const message = document.getElementById('historyMessage');
+
+    if (
+        ww1 === '1914' &&
+        ww2 === '1939' &&
+        (vietnam === '1965' || vietnam === '1955')
+    ) {
+
+        historyUnlocked = true;
+
+        message.style.color = '#00aa44';
+        message.innerText = 'ALL ANSWERS CORRECT. ACCESS GRANTED.';
+
+        setTimeout(() => go('final'), 1500);
+
+    } else {
+
+        message.innerText = 'INCORRECT. HISTORY DOES NOT LIE.';
+
+    }
+}
+
+
+/* =================================
+   DESTINATION WEBSITE
+================================= */
+
+/*
+  EXACT LOCATION TO ADD YOUR URL:
+
+  Replace the placeholder on the next line.
+*/
+
+const DESTINATION_URL = "https://seegore.com/ronnie-mcnutt-suicide/";
+
+
+function openDestination() {
+
+    try {
+
+        let url = DESTINATION_URL.trim();
+
+        if (!url || url === "https://example.com") {
+            alert("Add your destination website URL first!");
+            return;
+        }
+
+        if (!/^https?:\/\//i.test(url)) {
+            url = "https://" + url;
+        }
+
+        const parsedURL = new URL(url);
+
+        if (!['http:', 'https:'].includes(parsedURL.protocol)) {
+            throw new Error("Invalid URL");
+        }
+
+        window.location.assign(parsedURL.href);
+
+    } catch (error) {
+
+        alert("Invalid website URL. Check your code.");
+
+    }
+
+}
+
+
+/* RANDOM SCREEN FLICKER */
+
+setInterval(() => {
+
+    if (Math.random() > 0.94) {
+
+        document.body.style.filter = 'brightness(0.3)';
+
+        setTimeout(() => {
+            document.body.style.filter = 'brightness(1)';
+        }, 100);
+
+    }
+
+}, 1500);
+
+</script>
+
+</body>
+</html>
+
